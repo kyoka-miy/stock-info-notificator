@@ -8,5 +8,5 @@ dotenv.config();
 
 const url = await fetchLatestVideo();
 console.log(`Fetched URL: ${url}`);
-const content = url && (await extractRecommendationsWithGemini(url));
+const content = await extractRecommendationsWithGemini(url);
 console.log(`Fetched Content: ${content}`);

@@ -1,13 +1,20 @@
 import { google } from "googleapis";
 import { CONSTANTS } from "../constants.ts";
-import axios from "axios";
+import { GoogleGenAI } from "@google/genai";
+import dotenv from "dotenv";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const youtube = google.youtube("v3");
+dotenv.config();
+
+const youtube = google.youtube({
+  version: "v3",
+  auth: process.env.YOUTUBE_API_KEY,
+});
 
 export async function fetchLatestVideo(): Promise<string | null> {
   try {
     let latestVideo: string | null = null;
-    let latestDate = new Date(0); // Initialize to the earliest possible date
+    let latestDate = new Date(0);
 
     for (const channelId of CONSTANTS.YOUTUBE_CHANNEL_IDS) {
       const response = await youtube.search.list({
@@ -32,7 +39,6 @@ export async function fetchLatestVideo(): Promise<string | null> {
     }
 
     if (latestVideo) {
-      console.log(`Latest video URL: ${latestVideo}`);
       return latestVideo;
     } else {
       console.log("No videos found.");
@@ -44,24 +50,26 @@ export async function fetchLatestVideo(): Promise<string | null> {
   }
 }
 
-export async function extractRecommendationsWithGemini(videoUrl: string): Promise<string> {
-  try {
-    const geminiResponse = await axios.post(
-      "https://api.gemini.com/v1/analyze",
-      {
-        videoUrl: videoUrl,
-        prompt: "この動画に桐谷広人さん本人は登場しますか？その場合、本人が動画内でおすすめしている銘柄を教えてください。登場しない場合は「本人登場なし」と答えてください",
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GEMINI_API_KEY}`,
-        },
-      }
-    );
+const ai = new GoogleGenAI({});
 
-    return geminiResponse.data.result;
+export async function extractRecommendationsWithGemini(
+  videoUrl: string | null
+): Promise<string> {
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent([
+      "まずこの動画のタイトルと簡単な内容を教えてください。この動画に桐谷広人さん本人は登場しますか？その場合、本人が動画内でおすすめしている銘柄を、その理由、株主優待、配当利回りとともに全て教えてください。",
+      {
+        fileData: {
+          mimeType: "text/html",
+          fileUri: videoUrl || "",
+        },
+      },
+    ]);
+    return result.response.text();
   } catch (error) {
-    console.error("Error using Gemini API:", error);
+    console.error("Error using Gemini API:", error.response?.data || error);
     throw error;
   }
 }
