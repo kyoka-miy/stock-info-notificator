@@ -8,7 +8,7 @@ dotenv.config();
 
 const youtube = google.youtube({
   version: "v3",
-  auth: process.env.YOUTUBE_API_KEY,
+  auth: process.env.YOUTUBE_API_KEY || "",
 });
 
 export async function fetchLatestVideo(): Promise<string | null> {
@@ -18,7 +18,6 @@ export async function fetchLatestVideo(): Promise<string | null> {
 
     for (const channelId of CONSTANTS.YOUTUBE_CHANNEL_IDS) {
       const response = await youtube.search.list({
-        key: process.env.YOUTUBE_API_KEY,
         part: ["snippet"],
         q: CONSTANTS.YOUTUBE_SEARCH_QUERY,
         channelId: channelId,
@@ -26,14 +25,16 @@ export async function fetchLatestVideo(): Promise<string | null> {
         order: "date",
       });
 
-      const items = response.data.items;
+      const items = response.data?.items;
       if (items && items.length > 0) {
         const video = items[0];
-        const videoDate = new Date(video.snippet?.publishedAt || "");
+        if (video) {
+          const videoDate = new Date(video.snippet?.publishedAt || "");
 
-        if (videoDate > latestDate) {
-          latestDate = videoDate;
-          latestVideo = `https://www.youtube.com/watch?v=${video.id?.videoId}`;
+          if (videoDate > latestDate) {
+            latestDate = videoDate;
+            latestVideo = `https://www.youtube.com/watch?v=${video.id?.videoId}`;
+          }
         }
       }
     }
@@ -69,7 +70,9 @@ export async function extractRecommendationsWithGemini(
     ]);
     return result.response.text();
   } catch (error) {
-    console.error("Error using Gemini API:", error.response?.data || error);
+    if (error instanceof Error) {
+      console.error("Error using Gemini API:", error.message);
+    }
     throw error;
   }
 }
