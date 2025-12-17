@@ -10,9 +10,8 @@ console.log("Application started. Scheduler is running...");
 
 const scheduler = container.resolve(Scheduler);
 
-scheduler.scheduleTask();
-// cron.schedule("* * * * *", async () => {
-//   console.log("Scheduled task started at:", new Date().toISOString());
-//   await scheduler.scheduleTask();
-//   console.log("Scheduled task completed at:", new Date().toISOString());
-// });
+cron.schedule("0 9 * * *", async () => {
+  console.log("Scheduled task started at:", new Date().toISOString());
+  await scheduler.scheduleTask();
+  console.log("Scheduled task completed at:", new Date().toISOString());
+});
