@@ -58,7 +58,7 @@ export class ExtractFromYoutube implements ExtractInfoService {
     const results: string[] = [];
     for (const url of urls) {
       const result = await model.generateContent([
-        "まずこの動画のタイトルと簡単な内容を教えてください。この動画に桐谷広人さん本人は登場しますか？その場合、本人が動画内でおすすめしている銘柄を、その理由、現在の株価、株主優待、配当利回りとともに全て教えてください。",
+        "この動画のタイトルとURLを教えてください。この動画に桐谷広人さん本人が登場している場合、本人が動画内でおすすめしている銘柄を、お勧めする理由、現在の株価、株主優待、配当利回りとともに教えてください。なるべく簡潔に教えてください。",
         {
           fileData: {
             mimeType: "text/html",
@@ -66,6 +66,7 @@ export class ExtractFromYoutube implements ExtractInfoService {
           },
         },
       ]);
+      console.log(`Extracted info for ${url}:`, result.response.text());
       results.push(result.response.text());
     }
     return results;

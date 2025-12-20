@@ -26,16 +26,15 @@ export class Scheduler {
     console.log("Recommendations extracted:", recommendations);
 
     // Send results to LINE
-    const message = {
+    const message: { type: "text"; text: string } = {
       type: "text",
       text: `Latest Recommendations:\n${recommendations.join("\n")}`,
     };
 
-    // try {
-    //   await lineClient.pushMessage(process.env.LINE_USER_ID || "", message);
-    //   console.log("Notification sent to LINE successfully.");
-    // } catch (error) {
-    //   console.error("Failed to send notification to LINE:", error);
-    // }
+    try {
+      await lineClient.pushMessage(process.env.LINE_USER_ID || "", message);
+    } catch (error) {
+      console.error("Failed to send notification to LINE:", error);
+    }
   }
 }
