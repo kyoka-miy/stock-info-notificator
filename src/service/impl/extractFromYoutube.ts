@@ -19,34 +19,35 @@ export class ExtractFromYoutube implements ExtractInfoService {
 
     let latestVideos: string[] = [];
     let lastSavedDate = await getSavedTimestamp();
-    let latestDate = lastSavedDate;
+    let currentLatestDate = lastSavedDate;
 
-    for (const channelId of CONSTANTS.YOUTUBE_CHANNEL_IDS) {
+    for (const { id } of CONSTANTS.YOUTUBE_CHANNELS) {
       const response = await youtube.search.list({
         part: ["snippet"],
         q: CONSTANTS.YOUTUBE_SEARCH_QUERY,
-        channelId: channelId,
-        maxResults: 2,
+        channelId: id,
+        maxResults: 5,
         order: "date",
+        publishedAfter: lastSavedDate.toISOString(),
       });
 
       const items = response.data?.items;
-      if (!items || items.length == 0) continue;
+      if (!items) continue;
       for (const video of items) {
-        const videoDate = new Date(video.snippet?.publishedAt || "");
-        if (videoDate <= lastSavedDate) break;
-        latestVideos.push(
-          `https://www.youtube.com/watch?v=${video.id?.videoId}`,
-        );
+        const videoId = video.id?.videoId || "";
+        // exclude shorts
+        if (await isShort(videoId)) continue;
 
-        if (videoDate.getTime() > latestDate.getTime()) {
-          latestDate = new Date(videoDate.getTime());
+        latestVideos.push(`https://www.youtube.com/watch?v=${videoId}`);
+        const videoDate = new Date(video.snippet?.publishedAt || "");
+        if (videoDate.getTime() > currentLatestDate.getTime()) {
+          currentLatestDate = new Date(videoDate.getTime());
         }
       }
     }
 
-    if (lastSavedDate < latestDate) {
-      await saveTimestamp(latestDate);
+    if (lastSavedDate < currentLatestDate) {
+      await saveTimestamp(currentLatestDate);
     }
 
     return latestVideos;
@@ -58,7 +59,7 @@ export class ExtractFromYoutube implements ExtractInfoService {
     const results: string[] = [];
     for (const url of urls) {
       const result = await model.generateContent([
-        "この動画のタイトルとURLを教えてください。この動画に桐谷広人さん本人が登場している場合、本人が動画内でおすすめしている銘柄を、お勧めする理由、現在の株価、株主優待、配当利回りとともに教えてください。なるべく簡潔に教えてください。",
+        "この動画の中で桐谷さん本人がおすすめしている銘柄を、お勧めする理由、現在の株価、株主優待、配当利回りとともに教えてください。LINEメッセージとして送るので、なるべく簡潔に、一目で分かるように教えてください。",
         {
           fileData: {
             mimeType: "text/html",
@@ -81,4 +82,19 @@ async function getSavedTimestamp(): Promise<Date> {
 async function saveTimestamp(timestamp: Date): Promise<void> {
   const data = { latestTimestamp: timestamp.toISOString() };
   await fs.writeFile(TIMESTAMP_FILE, JSON.stringify(data, null, 2));
+}
+
+async function isShort(videoId: string): Promise<boolean> {
+  const url = `https://www.youtube.com/shorts/${videoId}`;
+  try {
+    // follow redirect
+    const response = await fetch(url, { method: "HEAD", redirect: "follow" });
+    if (response.url.includes("/shorts/")) {
+      return true;
+    }
+    return false;
+  } catch (error: any) {
+    console.error("Failed to check if video is short:", error.message);
+    return false;
+  }
 }
