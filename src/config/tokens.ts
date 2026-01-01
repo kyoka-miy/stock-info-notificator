@@ -1,3 +1,3 @@
 export const TOKENS = {
-  ExtractInfoService: "ExtractInfoService",
+  YoutubeSchedulerService: "YoutubeSchedulerService",
 };

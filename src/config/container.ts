@@ -1,8 +1,8 @@
 import { container } from "tsyringe";
-import { ExtractInfoService } from "../service/extractInfoService";
+import { YoutubeSchedulerService } from "../service/youtubeSchedulerService";
 import { TOKENS } from "./tokens";
-import { ExtractFromYoutube } from "../service/impl/extractFromYoutube";
+import { YoutubeSchedulerServiceImpl } from "../service/impl/youtubeSchedulerServiceImpl";
 
-container.register<ExtractInfoService>(TOKENS.ExtractInfoService, {
-  useClass: ExtractFromYoutube,
+container.register<YoutubeSchedulerService>(TOKENS.YoutubeSchedulerService, {
+  useClass: YoutubeSchedulerServiceImpl,
 });

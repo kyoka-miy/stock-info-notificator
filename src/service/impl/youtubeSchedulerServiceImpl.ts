@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { ExtractInfoService } from "../extractInfoService";
+import { YoutubeSchedulerService } from "../youtubeSchedulerService";
 import path from "path";
 import fs from "fs/promises";
 import { CONSTANTS } from "../../constants";
@@ -10,7 +10,7 @@ const TIMESTAMP_FILE = path.resolve(
   "../../data/latestYoutubeTimestamp.json",
 );
 
-export class ExtractFromYoutube implements ExtractInfoService {
+export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
   async getUrls(): Promise<string[]> {
     const youtube = google.youtube({
       version: "v3",
