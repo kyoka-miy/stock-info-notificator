@@ -13,12 +13,14 @@ export class YoutubeSchedulerInteractor extends AbstractSchedulerInteractor {
   }
 
   async execute(): Promise<void> {
-    const latestVideoUrls = await this.youtubeSchedulerService.getUrls();
-    console.log("Latest video URLs fetched:", latestVideoUrls);
+    const latestVideos = await this.youtubeSchedulerService.getVideoInfos();
+    console.log("Latest videos fetched:", latestVideos);
 
     const messages =
-      await this.youtubeSchedulerService.extractInfoByGemini(latestVideoUrls);
-    console.log("Recommendations extracted:", messages);
+      await this.youtubeSchedulerService.generateMessageWithGemini(
+        latestVideos,
+      );
+    console.log("Messages extracted:", messages);
 
     await this.sendLineMessages(messages);
   }

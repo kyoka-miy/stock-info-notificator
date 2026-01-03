@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { YoutubeSchedulerService } from "../youtubeSchedulerService";
+import { VideoInfo, YoutubeSchedulerService } from "../youtubeSchedulerService";
 import path from "path";
 import fs from "fs/promises";
 import { CONSTANTS } from "../../constants";
@@ -11,13 +11,13 @@ const TIMESTAMP_FILE = path.resolve(
 );
 
 export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
-  async getUrls(): Promise<string[]> {
+  async getVideoInfos(): Promise<VideoInfo[]> {
     const youtube = google.youtube({
       version: "v3",
       auth: process.env.YOUTUBE_API_KEY || "",
     });
 
-    let latestVideos: string[] = [];
+    let latestVideos: VideoInfo[] = [];
     let lastSavedDate = await getSavedTimestamp();
     let currentLatestDate = lastSavedDate;
 
@@ -38,11 +38,15 @@ export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
         // exclude shorts
         if (await isShort(videoId)) continue;
 
-        latestVideos.push(`https://www.youtube.com/watch?v=${videoId}`);
         const videoDate = new Date(video.snippet?.publishedAt || "");
         if (videoDate.getTime() > currentLatestDate.getTime()) {
           currentLatestDate = new Date(videoDate.getTime());
         }
+        latestVideos.push({
+          url: `https://www.youtube.com/watch?v=${videoId}`,
+          publishedAt: videoDate.toISOString(),
+          title: video.snippet?.title || "",
+        });
       }
     }
 
@@ -53,22 +57,36 @@ export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
     return latestVideos;
   }
 
-  async extractInfoByGemini(urls: string[]): Promise<string[]> {
+  async generateMessageWithGemini(videoInfos: VideoInfo[]): Promise<string[]> {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const results: string[] = [];
-    for (const url of urls) {
+    for (const videoInfo of videoInfos) {
       const result = await model.generateContent([
-        "この動画の中で桐谷さん本人がおすすめしている銘柄を、お勧めする理由、現在の株価、株主優待、配当利回りとともに教えてください。LINEメッセージとして送るので、なるべく簡潔に、一目で分かるように教えてください。",
+        "この動画の中で桐谷さん本人がおすすめしている銘柄を、お勧めする理由、現在の株価、株主優待、配当利回りとともに教えてください。LINEメッセージとして送信するのでなるべく簡潔に、一目で分かるように教えてください。",
         {
           fileData: {
             mimeType: "text/html",
-            fileUri: url,
+            fileUri: videoInfo.url,
           },
         },
       ]);
-      console.log(`Extracted info for ${url}:`, result.response.text());
-      results.push(result.response.text());
+
+      const publishedAtJST = new Date(videoInfo.publishedAt).toLocaleString(
+        "ja-JP",
+        {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        },
+      );
+
+      results.push(
+        `【${videoInfo.title}】\n${videoInfo.url}\n公開日: ${publishedAtJST}\n\n${result.response.text()}`,
+      );
     }
     return results;
   }
