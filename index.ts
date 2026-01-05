@@ -10,7 +10,7 @@ import { YoutubeSchedulerInteractor } from "./src/interactor/youtubeSchedulerInt
 console.log("Application started. Scheduler is running...");
 
 const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
-youtubeScheduler.execute();
+// youtubeScheduler.execute();
 cron.schedule("0 9 * * *", async () => {
   console.log("Scheduled task started at:", new Date().toISOString());
   await youtubeScheduler.execute();

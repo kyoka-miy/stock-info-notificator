@@ -33,10 +33,12 @@ export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
 
       const items = response.data?.items;
       if (!items) continue;
+      console.log(`Fetched ${items.length} videos for channel ID: ${id}`);
       for (const video of items) {
         const videoId = video.id?.videoId || "";
         // exclude shorts
         if (await isShort(videoId)) continue;
+        console.log("videoId:", videoId);
 
         const videoDate = new Date(video.snippet?.publishedAt || "");
         if (videoDate.getTime() > currentLatestDate.getTime()) {
@@ -53,7 +55,7 @@ export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
     if (lastSavedDate < currentLatestDate) {
       await saveTimestamp(currentLatestDate);
     }
-
+    console.log(latestVideos);
     return latestVideos;
   }
 
@@ -63,7 +65,7 @@ export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
     const results: string[] = [];
     for (const videoInfo of videoInfos) {
       const result = await model.generateContent([
-        "この動画の中で桐谷さん本人がおすすめしている銘柄を、お勧めする理由、現在の株価、株主優待、配当利回りとともに教えてください。LINEメッセージとして送信するのでなるべく簡潔に、一目で分かるように教えてください。",
+        "この動画の中で桐谷さん本人がおすすめしている銘柄を、お勧めする理由、現在の株価、株主優待、配当利回りとともに教えてください。LINEメッセージとして送信するのでなるべく簡潔に、絵文字も使って一目で分かるように教えてください。",
         {
           fileData: {
             mimeType: "text/html",
