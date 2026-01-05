@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node --max-old-space-size=4096 index.ts",
+    "dev": "node --max-old-space-size=4096 -r ts-node/register index.ts",
     "format": "prettier --write .",
     "lint": "prettier --check ."
   },
