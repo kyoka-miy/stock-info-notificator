@@ -3,11 +3,19 @@ dotenv.config();
 
 import "reflect-metadata";
 import "./src/config/container";
+import express from "express";
 import cron from "node-cron";
 import { container } from "tsyringe";
 import { YoutubeSchedulerInteractor } from "./src/interactor/youtubeSchedulerInteractor";
 
-console.log("Application started. Scheduler is running...");
+const app = express();
+
+app.listen(3000, () => {
+  console.log("Server started on port 3000");
+});
+app.get("/", (req, res) => {
+  res.send("Hello, Express!");
+});
 
 const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
 // youtubeScheduler.execute();
