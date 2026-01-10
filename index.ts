@@ -6,8 +6,19 @@ import "./src/config/container";
 import cron from "node-cron";
 import { container } from "tsyringe";
 import { YoutubeSchedulerInteractor } from "./src/interactor/youtubeSchedulerInteractor";
+import http from "http";
 
-console.log("Cron service started:", new Date().toISOString());
+const PORT = Number(process.env.PORT || 3000);
+
+// Render 用の生存確認サーバ
+http
+  .createServer((_, res) => {
+    res.writeHead(200);
+    res.end("OK");
+  })
+  .listen(PORT, () => {
+    console.log(`Health check server running on port ${PORT}`);
+  });
 
 cron.schedule("0 9 * * *", async () => {
   console.log("Scheduled task started:", new Date().toISOString());
