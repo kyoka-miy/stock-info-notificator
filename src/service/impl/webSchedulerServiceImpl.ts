@@ -2,8 +2,8 @@ import path from "path";
 import fs from "fs/promises";
 import { CONSTANTS } from "../../constants";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { WebSchedulerService } from "../WebSchedulerService";
 import axios from "axios";
+import { WebSchedulerService } from "../webSchedulerService";
 
 const TIMESTAMP_FILE = path.resolve(
   __dirname,

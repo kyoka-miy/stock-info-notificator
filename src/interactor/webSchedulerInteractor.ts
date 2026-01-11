@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { AbstractSchedulerInteractor } from "./abstractSchedulerInteractor";
 import { TOKENS } from "../config/tokens";
-import { WebSchedulerService } from "../service/WebSchedulerService";
+import { WebSchedulerService } from "../service/webSchedulerService";
 
 @injectable()
 export class WebSchedulerInteractor extends AbstractSchedulerInteractor {
