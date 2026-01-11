@@ -33,12 +33,10 @@ export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
 
       const items = response.data?.items;
       if (!items) continue;
-      console.log(`Fetched ${items.length} videos for channel ID: ${id}`);
       for (const video of items) {
         const videoId = video.id?.videoId || "";
         // exclude shorts
         if (await isShort(videoId)) continue;
-        console.log("videoId:", videoId);
 
         const videoDate = new Date(video.snippet?.publishedAt || "");
         if (videoDate.getTime() > currentLatestDate.getTime()) {
@@ -55,7 +53,6 @@ export class YoutubeSchedulerServiceImpl implements YoutubeSchedulerService {
     if (lastSavedDate < currentLatestDate) {
       await saveTimestamp(currentLatestDate);
     }
-    console.log(latestVideos);
     return latestVideos;
   }
 

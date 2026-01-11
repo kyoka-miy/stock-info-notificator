@@ -7,10 +7,11 @@ import cron from "node-cron";
 import { container } from "tsyringe";
 import { YoutubeSchedulerInteractor } from "./src/interactor/youtubeSchedulerInteractor";
 import http from "http";
+import { WebSchedulerInteractor } from "./src/interactor/webSchedulerInteractor";
 
 const PORT = Number(process.env.PORT || 3000);
 
-// Render 用の生存確認サーバ
+// health check server for Render
 http
   .createServer((_, res) => {
     res.writeHead(200);
@@ -28,3 +29,8 @@ cron.schedule("0 9 * * *", async () => {
 
   console.log("Scheduled task finished:", new Date().toISOString());
 });
+
+const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
+const webScheduler = container.resolve(WebSchedulerInteractor);
+// youtubeScheduler.execute();
+// webScheduler.execute();

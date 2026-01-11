@@ -23,4 +23,5 @@ export const CONSTANTS = {
     },
   ],
   YOUTUBE_SEARCH_QUERY: "桐谷さん",
+  WEB_SEARCH_QUERY: "桐谷さん 株 おすすめ",
 };
