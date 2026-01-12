@@ -30,7 +30,11 @@ cron.schedule("0 9 * * *", async () => {
   console.log("Scheduled task finished:", new Date().toISOString());
 });
 
-const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
-const webScheduler = container.resolve(WebSchedulerInteractor);
+cron.schedule("* * * * *", () => {
+  console.log("cron alive:", new Date().toISOString());
+});
+
+// const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
+// const webScheduler = container.resolve(WebSchedulerInteractor);
 // youtubeScheduler.execute();
 // webScheduler.execute();
