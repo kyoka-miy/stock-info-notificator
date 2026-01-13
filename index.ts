@@ -34,7 +34,7 @@ cron.schedule(
   }
 );
 
-cron.schedule("0 9 * * *", () => {
+cron.schedule("0 * * * *", () => {
   console.log("cron alive:", new Date().toISOString());
 });
 
