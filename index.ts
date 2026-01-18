@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import "reflect-metadata";
-import "./src/config/container";
 import { container } from "tsyringe";
 import { YoutubeSchedulerInteractor } from "./src/interactor/youtubeSchedulerInteractor";
 import { WebSchedulerInteractor } from "./src/interactor/webSchedulerInteractor";
@@ -19,8 +18,8 @@ app.post("/schedule", async (_, res) => {
   try {
     const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
     const webScheduler = container.resolve(WebSchedulerInteractor);
-    youtubeScheduler.execute();
-    webScheduler.execute();
+    await youtubeScheduler.execute();
+    await webScheduler.execute();
     res.status(200).send("cron executed");
   } catch (e) {
     console.error(e);
