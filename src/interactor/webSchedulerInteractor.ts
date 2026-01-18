@@ -13,7 +13,7 @@ export class WebSchedulerInteractor extends AbstractSchedulerInteractor {
   }
 
   async execute(): Promise<void> {
-    const latestArticles = await this.webSchedulerService.getArticleUrls();
+    const latestArticles = await this.webSchedulerService.getSourceInfos();
     console.log("Latest articles fetched:", latestArticles);
 
     const messages =

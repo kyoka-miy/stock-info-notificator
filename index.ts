@@ -3,10 +3,8 @@ dotenv.config();
 
 import "reflect-metadata";
 import "./src/config/container";
-import cron from "node-cron";
 import { container } from "tsyringe";
 import { YoutubeSchedulerInteractor } from "./src/interactor/youtubeSchedulerInteractor";
-import http from "http";
 import { WebSchedulerInteractor } from "./src/interactor/webSchedulerInteractor";
 import express from "express";
 
@@ -17,11 +15,12 @@ app.get("/", (_, res) => {
   res.send("OK");
 });
 
-// cron 実行用
 app.post("/schedule", async (_, res) => {
   try {
     const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
-    await youtubeScheduler.execute();
+    const webScheduler = container.resolve(WebSchedulerInteractor);
+    youtubeScheduler.execute();
+    webScheduler.execute();
     res.status(200).send("cron executed");
   } catch (e) {
     console.error(e);
@@ -32,25 +31,3 @@ app.post("/schedule", async (_, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// cron.schedule(
-//   "0 9 * * *",
-//   async () => {
-//     console.log("Scheduled task started:", new Date().toISOString());
-//     const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
-//     await youtubeScheduler.execute();
-//     console.log("Scheduled task finished:", new Date().toISOString());
-//   },
-//   {
-//     timezone: "Asia/Tokyo",
-//   }
-// );
-
-cron.schedule("0 * * * *", () => {
-  console.log("cron alive:", new Date().toISOString());
-});
-
-// const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
-// const webScheduler = container.resolve(WebSchedulerInteractor);
-// youtubeScheduler.execute();
-// webScheduler.execute();

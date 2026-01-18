@@ -1,9 +1,9 @@
 export interface YoutubeSchedulerService {
-  getVideoInfos(): Promise<VideoInfo[]>;
-  generateMessageWithGemini(videoInfos: VideoInfo[]): Promise<string[]>;
+  getVideoInfos(): Promise<SourceInfo[]>;
+  generateMessageWithGemini(infos: SourceInfo[]): Promise<string[]>;
 }
 
-export type VideoInfo = {
+export type SourceInfo = {
   url: string;
   publishedAt: string;
   title: string;

@@ -1,4 +1,6 @@
+import { SourceInfo } from "./youtubeSchedulerService";
+
 export interface WebSchedulerService {
-  getArticleUrls(): Promise<string[]>;
-  generateMessageWithGemini(urls: string[]): Promise<string[]>;
+  getSourceInfos(): Promise<SourceInfo[]>;
+  generateMessageWithGemini(infos: SourceInfo[]): Promise<string[]>;
 }
