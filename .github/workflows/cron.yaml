@@ -13,4 +13,6 @@ jobs:
     steps:
       - name: Call Render cron endpoint
         run: |
-          curl -X POST https://stock-info-notificator.onrender.com/schedule
+          curl -X POST \
+            -H "x-api-key: ${{ secrets.API_KEY }}" \
+            https://stock-info-notificator.onrender.com/schedule

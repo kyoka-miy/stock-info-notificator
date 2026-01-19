@@ -14,7 +14,11 @@ app.get("/", (_, res) => {
   res.send("OK");
 });
 
-app.post("/schedule", async (_, res) => {
+app.post("/schedule", async (req, res) => {
+  const apiKey = req.headers["x-api-key"];
+  if (apiKey !== process.env.API_KEY) {
+    return res.status(401).send("Unauthorized");
+  }
   try {
     const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
     const webScheduler = container.resolve(WebSchedulerInteractor);
