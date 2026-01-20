@@ -15,6 +15,7 @@ app.get("/", (_, res) => {
 });
 
 app.post("/schedule", async (req, res) => {
+  console.log("Received /schedule request");
   const apiKey = req.headers["x-api-key"];
   if (apiKey !== process.env.API_KEY) {
     return res.status(401).send("Unauthorized");
