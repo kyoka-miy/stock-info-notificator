@@ -3,7 +3,7 @@ name: Daily Cron
 on:
   schedule:
     # 0:00 UTC = 9:00 JST
-    - cron: "0 0 * * *"
+    - cron: "* * * * *"
   workflow_dispatch:
 
 jobs:
