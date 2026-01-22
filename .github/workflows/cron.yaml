@@ -9,6 +9,8 @@ on:
 jobs:
   run-cron:
     runs-on: ubuntu-latest
+    
+    environment: production
 
     steps:
       - name: Call Render cron endpoint (GET /)
