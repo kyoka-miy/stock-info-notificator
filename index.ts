@@ -25,8 +25,8 @@ app.post("/schedule", async (req, res) => {
   try {
     const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
     const webScheduler = container.resolve(WebSchedulerInteractor);
-    await youtubeScheduler.execute();
-    await webScheduler.execute();
+    // await youtubeScheduler.execute();
+    // await webScheduler.execute();
     res.status(200).send("cron executed");
   } catch (e) {
     console.error(e);
