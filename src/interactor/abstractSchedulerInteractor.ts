@@ -34,8 +34,7 @@ export abstract class AbstractSchedulerInteractor {
           text: message,
         }));
       try {
-        await lineClient.pushMessage({
-          to: process.env.LINE_USER_ID || "",
+        await lineClient.broadcast({
           messages: chunk,
         });
       } catch (error) {

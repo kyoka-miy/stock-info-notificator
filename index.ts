@@ -18,15 +18,13 @@ app.post("/schedule", async (req, res) => {
   console.log("Received /schedule request");
   const apiKey = req.headers["x-api-key"];
   if (apiKey !== process.env.API_KEY) {
-    console.log("Given KEY:", apiKey);
-    console.log("Expected API KEY:", process.env.API_KEY);
     return res.status(401).send("Unauthorized");
   }
   try {
     const youtubeScheduler = container.resolve(YoutubeSchedulerInteractor);
     const webScheduler = container.resolve(WebSchedulerInteractor);
-    // await youtubeScheduler.execute();
-    // await webScheduler.execute();
+    await youtubeScheduler.execute();
+    await webScheduler.execute();
     res.status(200).send("cron executed");
   } catch (e) {
     console.error(e);
