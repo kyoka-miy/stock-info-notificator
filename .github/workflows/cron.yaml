@@ -13,10 +13,7 @@ jobs:
     environment: production
 
     steps:
-      - name: Call Render cron endpoint (GET /)
-        run: |
-          curl -X GET https://stock-info-notificator.onrender.com/
-      - name: Call Render cron endpoint (POST /schedule)
+      - name: Call cron endpoint
         run: |
           curl -X POST \
             -H "x-api-key: ${{ secrets.API_KEY }}" \

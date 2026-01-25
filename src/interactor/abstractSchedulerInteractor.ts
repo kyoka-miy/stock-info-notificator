@@ -34,9 +34,14 @@ export abstract class AbstractSchedulerInteractor {
           text: message,
         }));
       try {
-        await lineClient.broadcast({
-          messages: chunk,
-        });
+        if (process.env.NODE_ENV === "production") {
+          await lineClient.broadcast({ messages: chunk });
+        } else {
+          await lineClient.pushMessage({
+            to: process.env.LINE_USER_ID || "",
+            messages: chunk,
+          });
+        }
       } catch (error) {
         console.error("Failed to send notification to LINE:", error);
       }
