@@ -5,16 +5,16 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { YoutubeSchedulerInteractor } from "./src/interactor/youtubeSchedulerInteractor";
 import { WebSchedulerInteractor } from "./src/interactor/webSchedulerInteractor";
-import express from "express";
+import express, { Request, Response } from "express";
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
 
-app.get("/", (_, res) => {
+app.get("/", (_, res: Response) => {
   res.send("OK");
 });
 
-app.post("/schedule", async (req, res) => {
+app.post("/schedule", async (req: Request, res: Response) => {
   console.log("Received /schedule request");
   const apiKey = req.headers["x-api-key"];
   if (apiKey !== process.env.API_KEY) {
