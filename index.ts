@@ -35,6 +35,3 @@ app.post("/schedule", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-const webScheduler = container.resolve(WebSchedulerInteractor);
-webScheduler.execute();

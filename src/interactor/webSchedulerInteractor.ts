@@ -26,13 +26,20 @@ export class WebSchedulerInteractor extends AbstractSchedulerInteractor {
     });
 
     return (
-      res.data.organic_results?.map((item: any) => {
-        return {
-          url: item.link,
-          publishedAt: item.date,
-          title: item.title,
-        };
-      }) ?? []
+      res.data.organic_results
+        ?.filter(
+          (item: any) =>
+            !CONSTANTS.EXCLUDE_URL_KEYWORDS.some((keyword) =>
+              item.link.includes(keyword),
+            ),
+        )
+        .map((item: any) => {
+          return {
+            url: item.link,
+            publishedAt: item.date,
+            title: item.title,
+          };
+        }) ?? []
     );
   }
 

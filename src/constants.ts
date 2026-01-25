@@ -24,4 +24,14 @@ export const CONSTANTS = {
   ],
   YOUTUBE_SEARCH_QUERY: "桐谷さん",
   WEB_SEARCH_QUERY: "桐谷さん 株 おすすめ",
+  EXCLUDE_URL_KEYWORDS: [
+    "www.youtube.com",
+    "search.yahoo.co.jp/realtime/search",
+    "www.instagram.com",
+    "jp.mercari.com",
+    "zai-tag",
+    "www.sponichi.co.jp",
+    "topics.smt.docomo.ne.jp",
+    "www.oricon.co.jp",
+  ],
 };
