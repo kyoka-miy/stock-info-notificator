@@ -33,5 +33,8 @@ export const CONSTANTS = {
     "www.sponichi.co.jp",
     "topics.smt.docomo.ne.jp",
     "www.oricon.co.jp",
+    "www.amazon.co.jp",
+    "kasumichan.com",
+    "photo/view"
   ],
 };
